@@ -107,20 +107,18 @@ main(int argc, char * argv[])
 	printf("timeWindow set to %f.\n\n", timeWindow);
 
 	float        timeToNextEruption = waitingTimeDistribution();
-	float        chancetoSeeEruption = 0;
 	float        totalChancetoSeeEruption = 0;
-	bool         seenSomething = false;
 	unsigned int i = 1;
 
-	chancetoSeeEruption = eruptionStartsInInterval(timeToNextEruption);
-	while (!seenSomething || chancetoSeeEruption > 0)
+	/*
+	 *	Executes the loop while there is still some chances to see an eruption.
+	 */
+	while (libUncertainFloatProbabilityGT(timeToNextEruption, travelTime) < 1)
 	{
 		printErruption(i, timeToNextEruption);
 		i++;
-		totalChancetoSeeEruption += chancetoSeeEruption;
+		totalChancetoSeeEruption += eruptionStartsInInterval(timeToNextEruption);
 		timeToNextEruption += waitingTimeDistribution();
-		chancetoSeeEruption = eruptionStartsInInterval(timeToNextEruption);
-		seenSomething = seenSomething || (chancetoSeeEruption > 0);
 	}
 
 	printf("\nTotal chances to see an eruption: %f %%.\n", totalChancetoSeeEruption * 100);
